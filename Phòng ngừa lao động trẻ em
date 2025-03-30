@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chatbot</title>
+    <style>
+ body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+    background-image: url('https://i.imgur.com/NZmsqz9.jpg'); /* Link ảnh */
+    background-size: cover; /* Phủ toàn bộ màn hình */
+    background-position: center; /* Căn giữa */
+     
+        }
+        .chat-container {
+          margin-top: 95px;
+            width: 300px;
+            background: #FFFAFA;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            display: flex; /* Thêm flex để sắp xếp chiều dọc */
+            flex-direction: column; /* Sắp xếp các thành phần con theo chiều dọc */
+            height: 500px; /* Thêm chiều cao cố định để chat-box có thể dùng flex: 1 */
+        }
+        .chat-box {
+            /* height: 300px; - Bỏ chiều cao cố định */
+            flex: 1; /* Cho phép chat-box co giãn lấp đầy không gian còn lại */
+            overflow-y: auto;
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+        .input-box {
+            display: flex;
+            padding: 10px;
+            background: #fff;
+            border-top: 1px solid #ddd; /* Thêm lại border-top để phân cách rõ hơn */
+        }
+        .input-box input {
+            flex: 1;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            outline: none; /* Loại bỏ viền xanh khi focus */
+        }
+        .input-box button {
+            margin-left: 5px;
+            padding: 8px 12px; /* Tăng padding ngang cho dễ bấm */
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.2s ease; /* Thêm hiệu ứng khi hover */
+        }
+        .input-box button:hover {
+             background: #0056b3; /* Đổi màu nền khi hover */
+        }
+        .reset-btn {
+            margin-left: 5px;
+            padding: 8px 12px; /* Tăng padding ngang */
+            background: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.2s ease; /* Thêm hiệu ứng khi hover */
+        }
+         .reset-btn:hover {
+             background: #c82333; /* Đổi màu nền khi hover */
+         }
+         /* Căn chỉnh tin nhắn */
+         .chat-box div {
+             margin-bottom: 10px;
+             line-height: 1.4;
+             max-width: 90%; /* Giới hạn chiều rộng tin nhắn */
+         }
+         .chat-box div strong {
+             /* display: block; Bỏ display block để tên và tin nhắn trên 1 dòng nếu ngắn */
+             margin-right: 5px; /* Khoảng cách giữa tên và nội dung */
+         }
+         /* Phân biệt tin nhắn người dùng và bot */
+         .user-message {
+             text-align: right;
+             margin-left: auto; /* Đẩy tin nhắn người dùng sang phải */
+         }
+         .bot-message {
+             text-align: left;
+             margin-right: auto; /* Đẩy tin nhắn bot sang trái */
+         }
+         .bot-message strong {
+             color: #007bff; /* Màu cho tên Bot */
+         }
+          .user-message strong {
+             color: #28a745; /* Màu cho tên Bạn */
+         }
+       /* Container chứa cả h1 và h2 */
+.header-container {
+    position: absolute;
+    top: 10px; /* Cách mép trên */
+    left: 50%;
+    transform: translateX(-50%);
+    text-align: center;
+    width: 100%;
+    padding: 10px;
+}
+
+/* Căn chỉnh h1 */
+ h1 {color:#1E90FF;
+    position: absolute;
+    top: 50px; 
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 10px 20px;
+    border-radius: 10px;
+    font-size: 22px;
+    font-weight: bold;
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 90%;
+}
+h2 {   color:#FF0000;
+  font-family: MJ Glamour Coquette;
+       position: absolute;
+    top: 80px; 
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 10px 20px;
+    border-radius: 10px;
+    font-size: 15px;
+    font-weight: bold;
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 90%;
+}
+       
+
+ </style>
+</head>
+<body>
+  <h1> ChatGPT-Đồng hành cùng ước mơ</h1>
+  <h2> Nói không với lao động trẻ em trái pháp luật</h2>
+     
+    <div class="chat-container">
+        <div class="chat-box" id="chat-box">
+             <div class="bot-message"><strong>Bot:</strong> Chào bạn, tôi có thể cung cấp thông tin về lao động trẻ em. Bạn muốn hỏi về gì? (Ví dụ: khái niệm, phân loại, nguyên nhân, ví dụ, luật, tác hại, giải pháp)</div>
+        </div>
+        <div class="input-box">
+            <input type="text" id="user-input" placeholder="Nhập câu hỏi..." onkeypress="handleKeyPress(event)">
+            <button onclick="sendMessage()">Gửi</button>
+            <button class="reset-btn" onclick="resetChat()">Reset</button>
+        </div>
+    </div>
+
+    <script>
+        function handleKeyPress(event) {
+            // Gửi tin nhắn khi nhấn Enter
+            if (event.key === "Enter") {
+                sendMessage();
+            }
+        }
+
+        function sendMessage() {
+            let inputField = document.getElementById("user-input");
+            let rawMessage = inputField.value.trim(); // Giữ lại tin nhắn gốc để hiển thị
+            if (rawMessage === "") return;
+
+            let lowerCaseMessage = rawMessage.toLowerCase(); // Dùng bản lowercase để xử lý logic
+
+            let chatBox = document.getElementById("chat-box");
+            // Hiển thị tin nhắn người dùng (áp dụng class để căn phải)
+            // Escape HTML để tránh XSS từ input người dùng
+            let userMessageHTML = `<div class="user-message"><strong>Bạn:</strong> ${escapeHtml(rawMessage)}</div>`;
+            chatBox.innerHTML += userMessageHTML;
+            inputField.value = ""; // Xóa input sau khi gửi
+
+            // Lấy và hiển thị phản hồi của bot (áp dụng class để căn trái)
+            let botResponse = getBotResponse(lowerCaseMessage);
+            // Bot response chứa HTML nên không cần escape
+            let botMessageHTML = `<div class="bot-message"><strong>Bot:</strong> ${botResponse}</div>`;
+
+             // Giả lập độ trễ trả lời của bot
+            setTimeout(() => {
+                chatBox.innerHTML += botMessageHTML;
+                chatBox.scrollTop = chatBox.scrollHeight; // Tự động cuộn xuống tin nhắn mới nhất
+            }, 500); // Độ trễ 0.5 giây
+
+             // Cuộn xuống ngay sau khi tin nhắn người dùng xuất hiện (để mượt hơn)
+             chatBox.scrollTop = chatBox.scrollHeight;
+        }
+
+        function getBotResponse(input) {
+            // Các câu trả lời của Bot
+            if (input.includes("khái niệm") || input.includes("định nghĩa") || input.includes("lao động trẻ em là gì")) {
+                return `<strong>Khái niệm về lao động trẻ em:</strong><br>
+                        Lao động trẻ em là việc sử dụng trẻ em vào các công việc có thể ảnh hưởng đến sức khỏe, tinh thần, đạo đức hoặc cản trở việc học tập của trẻ.`;
+            } else if (input.includes("phân loại")) {
+                return `<strong>Phân loại lao động trẻ em:</strong><br>
+                        ✅ <b>Lao động trẻ em chấp nhận được:</b> Công việc nhẹ, phù hợp với độ tuổi, không ảnh hưởng đến sức khỏe, học tập và sự phát triển của trẻ (ví dụ: giúp việc nhà nhẹ nhàng, phụ giúp kinh doanh gia đình không độc hại).<br>
+                        ❌ <b>Lao động trẻ em có hại/bất hợp pháp:</b> Công việc nguy hiểm, độc hại, bị bóc lột, hoặc cản trở giáo dục, vi phạm pháp luật về độ tuổi lao động tối thiểu.`;
+            } else if (input.includes("nguyên nhân")) {
+                return `<strong>Nguyên nhân của lao động trẻ em:</strong><br>
+                        - 🏚️ <b>Nghèo đói:</b> Đây là nguyên nhân hàng đầu, trẻ em phải làm việc để phụ giúp kinh tế gia đình.<br>
+                        - 📚 <b>Thiếu cơ hội giáo dục:</b> Chi phí học tập cao, trường học xa, chất lượng giáo dục kém khiến trẻ bỏ học đi làm.<br>
+                        - ️ <b>Nhận thức hạn chế:</b> Gia đình và cộng đồng chưa hiểu hết tác hại của lao động sớm.<br>
+                        - ⚖️ <b>Thực thi luật pháp yếu kém:</b> Quy định chưa chặt chẽ hoặc giám sát chưa hiệu quả.<br>
+                        - 💰 <b>Nhu cầu lao động giá rẻ:</b> Một số doanh nghiệp lợi dụng lao động trẻ em.<br>
+                        - 🌍 <b>Khủng hoảng, xung đột:</b> Thiên tai, dịch bệnh, chiến tranh làm gia tăng tình trạng nghèo đói và lao động trẻ em.`;
+            } else if (input.includes("luật")) {
+                return `<strong>Luật pháp quốc tế về lao động trẻ em:</strong><br>
+                        - <b>ILO Công ước 138 (Tuổi tối thiểu):</b> Quy định tuổi tối thiểu được phép làm việc.<br>
+                        - <b>ILO Công ước 182 (Hình thức tồi tệ nhất):</b> Kêu gọi xóa bỏ ngay lập tức các hình thức lao động trẻ em tồi tệ nhất (nô lệ, mại dâm, công việc nguy hiểm...).<br>
+                        - <b>Công ước LHQ về Quyền Trẻ em (CRC):</b> Bảo vệ trẻ em khỏi bóc lột kinh tế và công việc có hại.<br><br>
+                        <strong>Luật pháp Việt Nam về lao động trẻ em:</strong><br>
+                        - <b>Bộ luật Lao động 2019:</b> Quy định tuổi lao động tối thiểu là 15 tuổi. Cấm sử dụng người dưới 15 tuổi làm việc (trừ một số công việc nhẹ theo danh mục của Bộ LĐTBXH). Cấm sử dụng người từ 15 đến dưới 18 tuổi làm công việc nặng nhọc, độc hại, nguy hiểm.<br>
+                        - <b>Luật Trẻ Em 2016:</b> Đảm bảo các quyền cơ bản của trẻ em, bao gồm quyền được bảo vệ khỏi bóc lột lao động.`;
+               } else if (input.includes("tác hại") || input.includes("hậu quả")) {
+                return `<strong>Tác hại của lao động trẻ em:</strong><br>
+                        - 💔 <b>Sức khỏe & An toàn:</b> Gây tổn hại thể chất (chấn thương, bệnh tật), tinh thần (stress, trầm cảm).<br>
+                        - 📉 <b>Giáo dục:</b> Mất cơ hội đến trường, ảnh hưởng khả năng đọc viết, học vấn thấp.<br>
+                        - ⛓️ <b>Bóc lột & Lạm dụng:</b> Dễ bị trả lương thấp, điều kiện làm việc tồi tệ, lạm dụng thể chất, tinh thần, tình dục.<br>
+                        - ⏳ <b>Tương lai hạn chế:</b> Thiếu kỹ năng, học vấn dẫn đến khó kiếm việc làm tốt khi trưởng thành, lặp lại vòng nghèo đói.<br>
+                        - 🌍 <b>Xã hội:</b> Ảnh hưởng tiêu cực đến sự phát triển kinh tế - xã hội bền vững.`;
+            } else if (input.includes("giải pháp") || input.includes("phòng ngừa")) {
+                return `<strong>Giải pháp phòng ngừa và giảm thiểu lao động trẻ em:</strong><br>
+                        - 💰 <b>Kinh tế:</b> Hỗ trợ sinh kế, tạo việc làm bền vững cho người lớn, giảm nghèo.<br>
+                        - 🎓 <b>Giáo dục:</b> Miễn giảm học phí, cải thiện chất lượng giáo dục, khuyến khích trẻ đến trường.<br>
+                        - 📢 <b>Truyền thông:</b> Nâng cao nhận thức về tác hại của lao động trẻ em và quy định pháp luật.<br>
+                        - ⚖️ <b>Pháp luật:</b> Hoàn thiện và thực thi nghiêm quy định, tăng cường thanh tra, xử lý vi phạm.<br>
+                        - 🤝 <b>Hợp tác:</b> Phối hợp giữa gia đình, nhà trường, doanh nghiệp, chính phủ và các tổ chức xã hội.<br>
+                        - 🛡️ <b>An sinh xã hội:</b> Cung cấp các chương trình hỗ trợ cho trẻ em và gia đình có hoàn cảnh khó khăn.`;
+            } else if (input.includes("ví dụ")) { // <<<--- PHẦN VÍ DỤ ĐÃ ĐƯỢC THÊM VÀO ĐÂY
+                 return `<strong>Ví dụ về các hình thức lao động trẻ em tồi tệ nhất/bất hợp pháp:</strong><br>
+                        - ⛏️ Làm việc trong hầm mỏ, khai thác đá.<br>
+                        - 🌱 Nông nghiệp độc hại (phun thuốc trừ sâu, làm việc nặng quá sức).<br>
+                        - 🏭 Làm việc trong nhà máy, xí nghiệp độc hại, nguy hiểm (hóa chất, tiếng ồn, máy móc không an toàn).<br>
+                        - 🧱 Công trường xây dựng (khuân vác nặng, làm việc trên cao).<br>
+                        - 🎣 Đánh bắt hải sản xa bờ, công việc nguy hiểm trên biển.<br>
+                        - 🗑️ Nhặt rác, phế liệu trong điều kiện mất vệ sinh.<br>
+                        -  ulic️ Bị ép buộc ăn xin, bán hàng rong.<br>
+                        - 🏨 Giúp việc gia đình nhưng bị bóc lột sức lao động, lạm dụng.<br>
+                        - 🚫 Bị lôi kéo vào các hoạt động phi pháp (buôn bán ma túy, mại dâm...).`;
+            }
+            // Câu trả lời mặc định nếu không khớp từ khóa nào
+            return "Xin lỗi, tôi chưa được lập trình để trả lời câu hỏi đó. Bạn có thể hỏi về: khái niệm, phân loại, nguyên nhân, ví dụ, luật, tác hại, hoặc giải pháp liên quan đến lao động trẻ em.";
+        }
+
+        function resetChat() {
+            // Xóa nội dung chat-box và thêm lại tin nhắn chào mừng
+            let chatBox = document.getElementById("chat-box");
+            chatBox.innerHTML = `<div class="bot-message"><strong>Bot:</strong> Chào bạn, tôi có thể cung cấp thông tin về lao động trẻ em. Bạn muốn hỏi về gì? (Ví dụ: khái niệm, phân loại, nguyên nhân, ví dụ, luật, tác hại, giải pháp)</div>`;
+            document.getElementById("user-input").value = ""; // Cũng xóa luôn ô input
+        }
+
+        // Hàm escape HTML đơn giản để tránh XSS
+        function escapeHtml(unsafe) {
+            return unsafe
+                 .replace(/&/g, "&amp;")
+                 .replace(/</g, "&lt;")
+                 .replace(/>/g, "&gt;")
+                 .replace(/"/g, "&quot;")
+                 .replace(/'/g, "&#039;");
+        }
+
+    </script>
+</body>
+</html>
